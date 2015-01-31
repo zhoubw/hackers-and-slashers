@@ -19,7 +19,7 @@ clock = pygame.time.Clock()
 
 running = True
 
-'''
+
 class Player:
     def __init__(self):
         self.pos = [400,300]
@@ -31,16 +31,16 @@ class Player:
         KeyList = pygame.key.get_pressed()
         if KeyList[K_UP]:
             self.pos[1] -= self.speed
-        elif KeyList[K_DOWN]:
+        if KeyList[K_DOWN]:
             self.pos[1] += self.speed
         if KeyList[K_LEFT]:
             self.pos[0] -= self.speed
-        elif KeyList[K_RIGHT]:
+        if KeyList[K_RIGHT]:
             self.pos[0] += self.speed
         pygame.draw.circle(window,(0,0,255),self.pos,self.radius)
 
 player = Player()
-'''
+
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT: 
@@ -49,7 +49,9 @@ while running:
             if event.key == pygame.K_ESCAPE:
                 running = False
     window.fill((0,0,0))
-    #player.movement()
+
+    player.movement()
+
     clock.tick(FPS)
     frames += 1
     print frames
