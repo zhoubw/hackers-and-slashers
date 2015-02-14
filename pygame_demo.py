@@ -1,6 +1,8 @@
 import pygame
 from pygame.locals import *
 
+#lolololol
+
 window_x = 800
 window_y = 600
 
