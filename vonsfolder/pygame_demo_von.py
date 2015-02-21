@@ -25,8 +25,11 @@ class wall:
         self.width = 100
         self.length = 200
     def draw(self):
-        # pygame.draw.rect(screen, color, (x,y,width,height), thickness)
-        pygame.draw.rect(window,(255,0,0),(50,50,10,500), 10)
+        #pygame.draw.rect(screen, color, (x,y,width,height), thickness)
+        pygame.draw.rect(window,(255,0,0), (50,50,10,500), 10) # left wall - down
+        pygame.draw.rect(window, (255,0,0), (750,50,-700,10), 10) # up wall - left
+        pygame.draw.rect(window,(255,0,0), (750,550,10,-500), 10) # right wall - up
+        pygame.draw.rect(window, (255,0,0), (50,550,700,10), 10) # down wall - right
 class Player:
     def __init__(self):
         self.pos = [400,300]
