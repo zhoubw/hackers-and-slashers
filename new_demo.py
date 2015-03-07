@@ -49,8 +49,26 @@ class Player:
             self.pos[0] += self.speed
         pygame.draw.circle(window,(0,0,255),self.pos,self.radius)
 
-player = Player()
+#direction: 1 v = left, 2 = right
+direction = 1
+class Enemys:
+    def __init__(self):
+        self.pos = [400,200]
+        self.radius = 20
+        self.speed = 5
+    def movement(self):
+        #direction: 1 = left, 2 = right
+        if direction == 1:
+            self.pos[0] -= self.speed
+        if direction == 2:
+           self.pos[0] += self.speed
+        pygame.draw.circle(window,(50,205,50),self.pos,self.radius)
+        
+
+  
 wall = wall()
+player = Player()
+enemy = Enemys()
 
 while running:
     for event in pygame.event.get():
@@ -67,10 +85,17 @@ while running:
         player.pos[1] = 70
     if player.pos[1] > 540:
         player.pos[1] = 530
-    window.fill((0,0,0))
 
-    player.movement()
+    if enemy.pos[0] < 60:
+        direction = 2
+    if enemy.pos[0] > 740:
+        direction = 1
+        
+    window.fill((0,0,0))
+    
     wall.draw()
+    player.movement()
+    enemy.movement()
 
     clock.tick(FPS)
     frames += 1
