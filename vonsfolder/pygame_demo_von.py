@@ -50,7 +50,40 @@ class Player:
             self.pos[0] += self.speed
         pygame.draw.circle(window,(0,0,255),self.pos,self.radius)
 
-#direction: 1 v = left, 2 = right
+# projdir (projectile-direction)
+# projdir, 1=up, 2=right, 3=down, 4=left
+# projmode (projectile-mode)
+# projmode 1=shot, outside of player, 2=in player (being held onto)
+
+
+
+class Projectiles:
+    def __init__(self):
+        self.pos = [400,300]
+        self.radius = 5
+        self.speed = 2
+        self.projdir = 2
+        self.projmode = 1
+        self.timer = 0
+        self.limit = 30
+    def movement(self):
+        KeyList = pygame.key.get_pressed()
+        self.timer += 1
+        if KeyList[K_SPACE] and self.projmode == 1 and self.timer > self.limit:
+            self.pos = player.pos
+            self.speed = 0
+            self.projmode = 2
+            self.timer = 0
+        elif KeyList[K_SPACE] and self.projmode == 2 and self.timer > self.limit:
+            self.pos = [player.pos[0], player.pos[1]]
+            self.speed = 2
+            self.projmode = 1
+            self.timer = 0
+        self.pos[0] += self.speed
+        
+        pygame.draw.circle(window,(200,200,200),self.pos,self.radius)
+        
+# direction: 1 v = left, 2 = right
 direction = 1
 class Enemys:
     def __init__(self):
@@ -69,6 +102,7 @@ class Enemys:
   
 wall = wall()
 player = Player()
+projectile = Projectiles()
 enemy = Enemys()
 
 while running:
@@ -96,6 +130,7 @@ while running:
     
     wall.draw()
     player.movement()
+    projectile.movement()
     enemy.movement()
 
     clock.tick(FPS)
