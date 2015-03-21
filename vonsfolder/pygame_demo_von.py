@@ -36,26 +36,30 @@ class Player:
         self.pos = [400,300]
         self.radius = 20
         self.speed = 5
+        self.direction = 2
+        # direction, 1=up, 2=right, 3=down, 4=left
     #def __call__(self):
     #    pass
     def movement(self):
         KeyList = pygame.key.get_pressed()
         if KeyList[K_UP]:
             self.pos[1] -= self.speed
+            self.direction = 3
         if KeyList[K_DOWN]:
             self.pos[1] += self.speed
+            self.direction = 1
         if KeyList[K_LEFT]:
             self.pos[0] -= self.speed
+            self.direction = 4
         if KeyList[K_RIGHT]:
             self.pos[0] += self.speed
+            self.direction = 2
         pygame.draw.circle(window,(0,0,255),self.pos,self.radius)
 
 # projdir (projectile-direction)
 # projdir, 1=up, 2=right, 3=down, 4=left
 # projmode (projectile-mode)
 # projmode 1=shot, outside of player, 2=in player (being held onto)
-
-
 
 class Projectiles:
     def __init__(self):
@@ -68,6 +72,7 @@ class Projectiles:
         self.limit = 30
     def movement(self):
         KeyList = pygame.key.get_pressed()
+        self.direction = player.direction
         self.timer += 1
         if KeyList[K_SPACE] and self.projmode == 1 and self.timer > self.limit:
             self.pos = player.pos
@@ -79,22 +84,31 @@ class Projectiles:
             self.speed = 2
             self.projmode = 1
             self.timer = 0
-        self.pos[0] += self.speed
+
+        if self.direction == 1:
+            self.pos[1] += self.speed
+        if self.direction == 2:
+           self.pos[0] += self.speed
+        if self.direction == 3:
+            self.pos[1] -= self.speed
+        if self.direction == 4:
+           self.pos[0] -= self.speed
         
         pygame.draw.circle(window,(200,200,200),self.pos,self.radius)
         
-# direction: 1 v = left, 2 = right
-direction = 1
+
+
 class Enemys:
     def __init__(self):
         self.pos = [400,200]
         self.radius = 20
         self.speed = 5
+        self.direction = 1
     def movement(self):
         #direction: 1 = left, 2 = right
-        if direction == 1:
+        if self.direction == 1:
             self.pos[0] -= self.speed
-        if direction == 2:
+        if self.direction == 2:
            self.pos[0] += self.speed
         pygame.draw.circle(window,(50,205,50),self.pos,self.radius)
         
@@ -122,9 +136,9 @@ while running:
         player.pos[1] = 530
 
     if enemy.pos[0] < 60:
-        direction = 2
+        enemy.direction = 2
     if enemy.pos[0] > 740:
-        direction = 1
+        enemy.direction = 1
         
     window.fill((0,0,0))
     
