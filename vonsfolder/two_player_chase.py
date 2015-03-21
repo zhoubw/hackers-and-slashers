@@ -1,7 +1,8 @@
 import pygame
 from pygame.locals import *
 
-#this is von's chase game and it is awesome
+# this is von's chase game and it is awesome
+# git branches are dum.
 
 window_x = 1200
 window_y = 600
