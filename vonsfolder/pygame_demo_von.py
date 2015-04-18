@@ -99,8 +99,8 @@ class Projectiles:
 
 
 class Enemys:
-    def __init__(self):
-        self.pos = [400,200]
+    def __init__(self, position):
+        self.pos = position
         self.radius = 20
         self.speed = 5
         self.direction = 1
@@ -109,15 +109,25 @@ class Enemys:
         if self.direction == 1:
             self.pos[0] -= self.speed
         if self.direction == 2:
-           self.pos[0] += self.speed
+            self.pos[0] += self.speed
         pygame.draw.circle(window,(50,205,50),self.pos,self.radius)
+
+        if self.pos[0] < 60:
+            self.direction = 2
+        if self.pos[0] > 740:
+            self.direction = 1
         
 
   
 wall = wall()
 player = Player()
 projectile = Projectiles()
-enemy = Enemys()
+
+
+numEnemys = 5 # total number of enemies
+badguyArray = []
+for index in xrange(numEnemys):
+    badguyArray.append(Enemys([(100), (index * 100 + 100)]))
 
 while running:
     for event in pygame.event.get():
@@ -135,17 +145,16 @@ while running:
     if player.pos[1] > 540:
         player.pos[1] = 530
 
-    if enemy.pos[0] < 60:
-        enemy.direction = 2
-    if enemy.pos[0] > 740:
-        enemy.direction = 1
+    
         
     window.fill((0,0,0))
     
     wall.draw()
     player.movement()
     projectile.movement()
-    enemy.movement()
+    
+    for index in xrange(numEnemys):
+        badguyArray[index].movement()
 
     clock.tick(FPS)
     frames += 1
