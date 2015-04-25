@@ -1,4 +1,5 @@
 import pygame
+import random
 from pygame.locals import *
 from functions_von import *
 
@@ -38,23 +39,27 @@ class Player:
         self.speed = 5
         self.direction = 2
         # direction, 1=up, 2=right, 3=down, 4=left
+        
+        self.health = 100
+        self.color = [0,0,255]
+        
     #def __call__(self):
     #    pass
     def movement(self):
         KeyList = pygame.key.get_pressed()
-        if KeyList[K_UP]:
+        if KeyList[K_UP] and self.health > 0:
             self.pos[1] -= self.speed
             self.direction = 3
-        if KeyList[K_DOWN]:
+        if KeyList[K_DOWN] and self.health > 0:
             self.pos[1] += self.speed
             self.direction = 1
-        if KeyList[K_LEFT]:
+        if KeyList[K_LEFT] and self.health > 0:
             self.pos[0] -= self.speed
             self.direction = 4
-        if KeyList[K_RIGHT]:
+        if KeyList[K_RIGHT] and self.health > 0:
             self.pos[0] += self.speed
             self.direction = 2
-        pygame.draw.circle(window,(0,0,255),self.pos,self.radius)
+        pygame.draw.circle(window,(self.color),self.pos,self.radius)
 
 # projdir (projectile-direction)
 # projdir, 1=up, 2=right, 3=down, 4=left
@@ -104,6 +109,7 @@ class Enemys:
         self.radius = 20
         self.speed = 5
         self.direction = 1
+        self.health = 40
     def movement(self):
         #direction: 1 = left, 2 = right
         if self.direction == 1:
@@ -144,7 +150,24 @@ while running:
         player.pos[1] = 70
     if player.pos[1] > 540:
         player.pos[1] = 530
+    for i in badguyArray:
+        if abs(player.pos[0] - i.pos[0]) <= 20 and abs(player.pos[1] - i.pos[1]) <= 20:
+            player.health -= 10
+    if player.health <= 0:
+        player.color = (255,0,0)
+        #print("you died!!")
+            
+    for eachEnemy in badguyArray:
+        if abs(projectile.pos[0] - eachEnemy.pos[0]) <= 40 and abs(projectile.pos[1] - eachEnemy.pos[1]) <= 40:
+            eachEnemy.health -= 20
+    for eachEnemy in badguyArray:
+        if eachEnemy.health <= 0:
+            print(len(badguyArray))
+            badguyArray.remove(eachEnemy)
+            print(len(badguyArray))
+            #print("Badguy #" + str(eachEnemy) + "is down!!")
 
+    
     
         
     window.fill((0,0,0))
@@ -153,12 +176,12 @@ while running:
     player.movement()
     projectile.movement()
     
-    for index in xrange(numEnemys):
-        badguyArray[index].movement()
+    for eachEnemy in badguyArray:
+        eachEnemy.movement()
 
     clock.tick(FPS)
     frames += 1
-    print frames
+    #print frames
     #pygame.display.flip()
     pygame.display.update()
-pygame.exit()
+pygame.quit()
