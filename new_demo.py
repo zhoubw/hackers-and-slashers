@@ -19,6 +19,7 @@ window.blit(background,(0,0))
 clock = pygame.time.Clock()
 
 running = True
+powerthing = True
 
 class wall:
     def __init__(self):
@@ -31,6 +32,16 @@ class wall:
         pygame.draw.rect(window, (255,0,0), (750,50,-700,10), 10) # up wall - left
         pygame.draw.rect(window,(255,0,0), (750,550,10,-500), 10) # right wall - up
         pygame.draw.rect(window, (255,0,0), (50,550,700,10), 10) # down wall - right
+
+#Aesthetics & class code
+class Powerup:
+    def __init__(self):
+        self.pos = [300,300]
+        self.width = 50
+        self.length = 50
+    def appear(self):
+        pygame.draw.rect(window,(100,0,100), (300,300,10,10), 5)
+	
 class Player:
     def __init__(self):
         self.pos = [400,300]
@@ -70,6 +81,8 @@ class Enemys:
 wall = wall()
 player = Player()
 enemy = Enemys()
+powerup = Powerup()
+
 
 while running:
     for event in pygame.event.get():
@@ -91,6 +104,14 @@ while running:
         direction = 2
     if enemy.pos[0] > 740:
         direction = 1
+	#This detects if the player moves close to the powerup & then does something
+    if (player.pos[0] == powerup.pos[0] - 10 or powerup.pos[0] + 10) & (player.pos[1] == powerup.pos[1] - 10 or powerup.pos[1] + 10):
+	powerthing = True
+    else:
+	#Increase stat & makes powerup dissapear
+	powerthing = False
+    if powerthing:
+	powerup.appear()
         
     window.fill((0,0,0))
     
