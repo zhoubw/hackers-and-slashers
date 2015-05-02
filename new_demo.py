@@ -1,7 +1,7 @@
 import pygame
 import random
 from pygame.locals import *
-from functions_von import *
+from functions import *
 
 window_x = 800
 window_y = 600
@@ -42,7 +42,7 @@ class Powerup:
         self.length = 50
     def appear(self):
         pygame.draw.rect(window,(100,0,100), (300,300,10,10), 5)
-	
+    
 class Player:
     def __init__(self):
         self.pos = [400,300]
@@ -50,12 +50,11 @@ class Player:
         self.speed = 5
         self.direction = 2
         # direction, 1=up, 2=right, 3=down, 4=left
+        self.timer = 0
+        self.limit = 30
         
         self.health = 100
         self.color = [0,0,255]
-        
-    #def __call__(self):
-    #    pass
     def movement(self):
         KeyList = pygame.key.get_pressed()
         if KeyList[K_UP] and self.health > 0:
@@ -70,6 +69,7 @@ class Player:
         if KeyList[K_RIGHT] and self.health > 0:
             self.pos[0] += self.speed
             self.direction = 2
+        self.timer += 1
         pygame.draw.circle(window,(self.color),self.pos,self.radius)
 
 # projdir (projectile-direction)
@@ -81,9 +81,10 @@ class Projectiles:
     def __init__(self):
         self.pos = [400,300]
         self.radius = 5
-        self.speed = 2
+        self.speed = 0
         self.projdir = 2
-        self.projmode = 1
+        self.projmode = 2
+        self.pos = player.pos
         self.timer = 0
         self.limit = 30
     def movement(self):
@@ -138,19 +139,13 @@ class Enemys:
   
 wall = wall()
 player = Player()
-<<<<<<< HEAD
 projectile = Projectiles()
-
+powerup = Powerup()
 
 numEnemys = 5 # total number of enemies
 badguyArray = []
 for index in xrange(numEnemys):
     badguyArray.append(Enemys([(100), (index * 100 + 100)]))
-=======
-enemy = Enemys()
-powerup = Powerup()
-
->>>>>>> origin/EthansBranch
 
 while running:
     for event in pygame.event.get():
@@ -167,40 +162,34 @@ while running:
         player.pos[1] = 70
     if player.pos[1] > 540:
         player.pos[1] = 530
+        
     for i in badguyArray:
-        if abs(player.pos[0] - i.pos[0]) <= 20 and abs(player.pos[1] - i.pos[1]) <= 20:
+        if abs(player.pos[0] - i.pos[0]) <= 20 and abs(player.pos[1] - i.pos[1]) <= 20 and player.timer > player.limit:
             player.health -= 10
+            print(player.health)
+            player.timer = 0
     if player.health <= 0:
         player.color = (255,0,0)
-        #print("you died!!")
+        print("You died!!")
             
     for eachEnemy in badguyArray:
         if abs(projectile.pos[0] - eachEnemy.pos[0]) <= 40 and abs(projectile.pos[1] - eachEnemy.pos[1]) <= 40:
             eachEnemy.health -= 20
     for eachEnemy in badguyArray:
         if eachEnemy.health <= 0:
-            print(len(badguyArray))
             badguyArray.remove(eachEnemy)
-            print(len(badguyArray))
             #print("Badguy #" + str(eachEnemy) + "is down!!")
 
-<<<<<<< HEAD
-    
-    
-=======
-    if enemy.pos[0] < 60:
-        direction = 2
-    if enemy.pos[0] > 740:
-        direction = 1
-	#This detects if the player moves close to the powerup & then does something
+
+    #This detects if the player moves close to the powerup & then does something
     if (player.pos[0] == powerup.pos[0] - 10 or powerup.pos[0] + 10) & (player.pos[1] == powerup.pos[1] - 10 or powerup.pos[1] + 10):
-	powerthing = True
+        powerthing = True
     else:
-	#Increase stat & makes powerup dissapear
-	powerthing = False
+        #Increase stat & makes powerup dissapear
+        powerthing = False
     if powerthing:
-	powerup.appear()
->>>>>>> origin/EthansBranch
+        powerup.appear()
+
         
     window.fill((0,0,0))
     

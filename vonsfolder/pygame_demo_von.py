@@ -20,6 +20,7 @@ window.blit(background,(0,0))
 clock = pygame.time.Clock()
 
 running = True
+powerthing = True
 
 class wall:
     def __init__(self):
@@ -32,6 +33,16 @@ class wall:
         pygame.draw.rect(window, (255,0,0), (750,50,-700,10), 10) # up wall - left
         pygame.draw.rect(window,(255,0,0), (750,550,10,-500), 10) # right wall - up
         pygame.draw.rect(window, (255,0,0), (50,550,700,10), 10) # down wall - right
+
+#Aesthetics & class code
+class Powerup:
+    def __init__(self):
+        self.pos = [300,300]
+        self.width = 50
+        self.length = 50
+    def appear(self):
+        pygame.draw.rect(window,(100,0,100), (300,300,10,10), 5)
+    
 class Player:
     def __init__(self):
         self.pos = [400,300]
@@ -39,12 +50,11 @@ class Player:
         self.speed = 5
         self.direction = 2
         # direction, 1=up, 2=right, 3=down, 4=left
+        self.timer = 0
+        self.limit = 30
         
         self.health = 100
         self.color = [0,0,255]
-        
-    #def __call__(self):
-    #    pass
     def movement(self):
         KeyList = pygame.key.get_pressed()
         if KeyList[K_UP] and self.health > 0:
@@ -59,6 +69,7 @@ class Player:
         if KeyList[K_RIGHT] and self.health > 0:
             self.pos[0] += self.speed
             self.direction = 2
+        self.timer += 1
         pygame.draw.circle(window,(self.color),self.pos,self.radius)
 
 # projdir (projectile-direction)
@@ -70,9 +81,10 @@ class Projectiles:
     def __init__(self):
         self.pos = [400,300]
         self.radius = 5
-        self.speed = 2
+        self.speed = 0
         self.projdir = 2
-        self.projmode = 1
+        self.projmode = 2
+        self.pos = player.pos
         self.timer = 0
         self.limit = 30
     def movement(self):
@@ -128,7 +140,7 @@ class Enemys:
 wall = wall()
 player = Player()
 projectile = Projectiles()
-
+powerup = Powerup()
 
 numEnemys = 5 # total number of enemies
 badguyArray = []
@@ -150,25 +162,34 @@ while running:
         player.pos[1] = 70
     if player.pos[1] > 540:
         player.pos[1] = 530
+        
     for i in badguyArray:
-        if abs(player.pos[0] - i.pos[0]) <= 20 and abs(player.pos[1] - i.pos[1]) <= 20:
+        if abs(player.pos[0] - i.pos[0]) <= 20 and abs(player.pos[1] - i.pos[1]) <= 20 and player.timer > player.limit:
             player.health -= 10
+            print(player.health)
+            player.timer = 0
     if player.health <= 0:
         player.color = (255,0,0)
-        #print("you died!!")
+        print("You died!!")
             
     for eachEnemy in badguyArray:
         if abs(projectile.pos[0] - eachEnemy.pos[0]) <= 40 and abs(projectile.pos[1] - eachEnemy.pos[1]) <= 40:
             eachEnemy.health -= 20
     for eachEnemy in badguyArray:
         if eachEnemy.health <= 0:
-            print(len(badguyArray))
             badguyArray.remove(eachEnemy)
-            print(len(badguyArray))
             #print("Badguy #" + str(eachEnemy) + "is down!!")
 
-    
-    
+
+    #This detects if the player moves close to the powerup & then does something
+    if (player.pos[0] == powerup.pos[0] - 10 or powerup.pos[0] + 10) & (player.pos[1] == powerup.pos[1] - 10 or powerup.pos[1] + 10):
+        powerthing = True
+    else:
+        #Increase stat & makes powerup dissapear
+        powerthing = False
+    if powerthing:
+        powerup.appear()
+
         
     window.fill((0,0,0))
     
