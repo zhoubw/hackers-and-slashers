@@ -154,7 +154,6 @@ while running:
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 running = False
-                
     if player.pos[0] < 90:
         player.pos[0] = 90
     if player.pos[0] > 720:
@@ -180,6 +179,7 @@ while running:
         if eachEnemy.health <= 0:
             badguyArray.remove(eachEnemy)
             #print("Badguy #" + str(eachEnemy) + "is down!!")
+
 
     #This detects if the player moves close to the powerup & then does something
     if (player.pos[0] == powerup.pos[0] - 10 or powerup.pos[0] + 10) & (player.pos[1] == powerup.pos[1] - 10 or powerup.pos[1] + 10):

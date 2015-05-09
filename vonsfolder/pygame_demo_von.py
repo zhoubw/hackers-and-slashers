@@ -154,14 +154,14 @@ while running:
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 running = False
-    if player.pos[0] < 60:
-        player.pos[0] = 70
-    if player.pos[0] > 740:
-        player.pos[0] = 730
-    if player.pos[1] < 60:
-        player.pos[1] = 70
-    if player.pos[1] > 540:
-        player.pos[1] = 530
+    if player.pos[0] < 90:
+        player.pos[0] = 90
+    if player.pos[0] > 720:
+        player.pos[0] = 720
+    if player.pos[1] < 90:
+        player.pos[1] = 90
+    if player.pos[1] > 520:
+        player.pos[1] = 520
         
     for i in badguyArray:
         if abs(player.pos[0] - i.pos[0]) <= 20 and abs(player.pos[1] - i.pos[1]) <= 20 and player.timer > player.limit:
