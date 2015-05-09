@@ -51,7 +51,7 @@ class Player:
         self.direction = 2
         # direction, 1=up, 2=right, 3=down, 4=left
         self.timer = 0
-        self.limit = 30
+        self.limit = 20
         
         self.health = 100
         self.color = [0,0,255]
@@ -119,21 +119,58 @@ class Enemys:
     def __init__(self, position):
         self.pos = position
         self.radius = 20
-        self.speed = 5
-        self.direction = 1
+        self.speed = 2
         self.health = 40
+        self.diffXplayer = 0
+        self.diffYplayer = 0
+        # diffXplayer and diffYplayer are how far away
+        # the enemy is from the player. this determines
+        # the direction each enermy moves in
+        self.phase = 1
+        # phase 2,4 = wait, phase 1 = normal homing, phase 3 = random directions
+        self.randomdir = 1
+        # this is a random direction, 1=up, 2=right, 3=down, 4=left
+        self.timer = 0
     def movement(self):
-        #direction: 1 = left, 2 = right
-        if self.direction == 1:
-            self.pos[0] -= self.speed
-        if self.direction == 2:
-            self.pos[0] += self.speed
+        # this controls what phase the enemy AI is in
+        self.timer += 1
+        if self.timer % 1200 >= 0 and self.timer % 1200 < 300:
+            self.phase = 1
+        if self.timer % 1200 >= 300 and self.timer % 1200 < 600:
+            self.phase = 2
+        if self.timer % 1200 >= 600 and self.timer % 1200 < 900:
+            self.phase = 3
+        if self.timer % 1200 >= 900 and self.timer % 1200 < 1200:
+            self.phase = 4
+        if self.phase == 1:
+            self.speed = 2
+            self.diffXplayer = player.pos[0] - self.pos[0]
+            self.diffYplayer = player.pos[1] - self.pos[1]
+            
+            if self.diffXplayer > 0 and self.diffXplayer >= self.diffYplayer:
+                self.pos[0] += self.speed
+            if self.diffXplayer < 0 and self.diffXplayer < self.diffYplayer:
+                self.pos[0] -= self.speed
+            if self.diffYplayer > 0 and self.diffYplayer >= self.diffXplayer:
+                self.pos[1] += self.speed
+            if self.diffYplayer < 0 and self.diffYplayer < self.diffXplayer:
+                self.pos[1] -= self.speed
+        if self.phase == 2 or self.phase == 4:
+            self.speed = 0
+        if self.phase == 3:
+            self.speed = 2
+            for eachEnemy in badguyArray:
+                self.randomdir = random.randint(1, 4)
+                if self.randomdir == 1:
+                    self.pos[1] += self.speed
+                if self.randomdir == 2:
+                    self.pos[0] += self.speed
+                if self.randomdir == 3:
+                    self.pos[1] -= self.speed
+                if self.randomdir == 4:
+                    self.pos[0] -= self.speed
+                
         pygame.draw.circle(window,(50,205,50),self.pos,self.radius)
-
-        if self.pos[0] < 60:
-            self.direction = 2
-        if self.pos[0] > 740:
-            self.direction = 1
         
 
   
@@ -146,6 +183,7 @@ numEnemys = 5 # total number of enemies
 badguyArray = []
 for index in xrange(numEnemys):
     badguyArray.append(Enemys([(100), (index * 100 + 100)]))
+
 
 while running:
     for event in pygame.event.get():
@@ -162,7 +200,10 @@ while running:
         player.pos[1] = 90
     if player.pos[1] > 520:
         player.pos[1] = 520
-        
+
+    
+
+    
     for i in badguyArray:
         if abs(player.pos[0] - i.pos[0]) <= 20 and abs(player.pos[1] - i.pos[1]) <= 20 and player.timer > player.limit:
             player.health -= 10
@@ -173,7 +214,7 @@ while running:
         print("You died!!")
             
     for eachEnemy in badguyArray:
-        if abs(projectile.pos[0] - eachEnemy.pos[0]) <= 40 and abs(projectile.pos[1] - eachEnemy.pos[1]) <= 40:
+        if abs(projectile.pos[0] - eachEnemy.pos[0]) <= 40 and abs(projectile.pos[1] - eachEnemy.pos[1]) <= 40 and projectile.projmode == 1:
             eachEnemy.health -= 20
     for eachEnemy in badguyArray:
         if eachEnemy.health <= 0:
@@ -202,6 +243,8 @@ while running:
 
     clock.tick(FPS)
     frames += 1
+
+    print badguyArray[0].phase
     #print frames
     #pygame.display.flip()
     pygame.display.update()
